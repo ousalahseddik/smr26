@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../../providers/sponsor_provider.dart';
 import '../../providers/theme_provider.dart';
+import '../../utils/responsive.dart';
 
 class HomeSponsors extends StatefulWidget {
   final Function(int) onNavigateToSponsorsTab;
@@ -34,7 +35,7 @@ class _HomeSponsorsState extends State<HomeSponsors> {
 
       final max = _scrollController.position.maxScrollExtent;
       final current = _scrollController.offset;
-      final cardWidth = 110.0; // largeur carte + padding
+      final cardWidth = _scrollController.position.viewportDimension > 600 ? 140.0 : 110.0;
 
       if (current >= max) {
         // Retour au début
@@ -72,6 +73,8 @@ class _HomeSponsorsState extends State<HomeSponsors> {
 
     _startAutoScroll(allSponsors.length);
 
+    final double cardSize = isTablet(context) ? 130 : 100;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -102,7 +105,7 @@ class _HomeSponsorsState extends State<HomeSponsors> {
 
         // Slider horizontal auto-scroll
         SizedBox(
-          height: 100,
+          height: cardSize,
           child: ListView.builder(
             controller: _scrollController,
             scrollDirection: Axis.horizontal,
@@ -112,7 +115,7 @@ class _HomeSponsorsState extends State<HomeSponsors> {
             itemBuilder: (context, index) {
               final sponsor = allSponsors[index];
               return Container(
-                width: 100, // largeur fixe par carte
+                width: cardSize,
                 margin: const EdgeInsets.only(right: 10),
                 decoration: BoxDecoration(
                   color: t.cardBgColor,

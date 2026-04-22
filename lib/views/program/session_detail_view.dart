@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../../utils/html_utils.dart';
+import '../../utils/responsive.dart';
 import '../../models/program_model.dart';
 import '../../models/app_theme_model.dart';
 import '../../providers/theme_provider.dart';
@@ -39,7 +41,7 @@ class SessionDetailView extends StatelessWidget {
         child: CustomScrollView(
         slivers: [
           SliverAppBar(
-            expandedHeight: 180,
+            expandedHeight: isTablet(context) ? 220 : 180,
             pinned: true,
             backgroundColor: primaryColor,
             leading: const BackButton(color: Colors.white),
@@ -83,7 +85,7 @@ class SessionDetailView extends StatelessWidget {
                         'SESSION :',
                         style: TextStyle(
                           color: Colors.white.withValues(alpha: 0.8),
-                          fontSize: 12,
+                          fontSize: rFs(context, 12),
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -91,9 +93,9 @@ class SessionDetailView extends StatelessWidget {
                       Text(
                         item.displayTitle,
                         maxLines: 3,
-                        style: const TextStyle(
+                        style: TextStyle(
                           color: Colors.white,
-                          fontSize: 18,
+                          fontSize: rFs(context, 18),
                           fontWeight: FontWeight.bold,
                           height: 1.2,
                         ),
@@ -186,17 +188,17 @@ class SessionDetailView extends StatelessWidget {
                     ),
                   ],
                   const SizedBox(height: 32),
-                  if (session?.description != null ||
-                      item.description != null) ...[
+                  ...[
                     _buildSectionTitle("À propos de la session", primaryColor),
                     const SizedBox(height: 12),
-                    Text(
-                      session?.description ?? item.description!,
-                      style: TextStyle(
-                        color: theme.mainTextSecondaryColor,
+                    htmlContentOrEmpty(
+                      session?.description ?? item.description,
+                      textStyle: TextStyle(
+                        color: theme.mainTextPrimaryColor,
                         fontSize: 14,
                         height: 1.6,
                       ),
+                      emptyColor: theme.mainTextSecondaryColor,
                     ),
                     const SizedBox(height: 32),
                   ],

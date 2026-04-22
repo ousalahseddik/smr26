@@ -9,6 +9,14 @@ bool isTablet(BuildContext context) {
 /// Largeur maximale du contenu sur grand écran (liste, détail…).
 const double kMaxContentWidth = 720;
 
+/// Responsive font size: +20% on tablets.
+double rFs(BuildContext context, double size) =>
+    isTablet(context) ? size * 1.2 : size;
+
+/// Responsive sizing for dimensions (icons, images, paddings): +25% on tablets.
+double rS(BuildContext context, double size) =>
+    isTablet(context) ? size * 1.25 : size;
+
 /// Enveloppe un widget dans une contrainte de largeur max centrée.
 /// Utilisé pour éviter que les listes ne s'étirent sur toute la largeur tablette.
 Widget maxWidthBox({required Widget child, double maxWidth = kMaxContentWidth}) {

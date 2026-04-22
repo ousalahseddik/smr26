@@ -3,6 +3,7 @@ import 'package:event_app/views/program/program_view.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/theme_provider.dart';
+import '../utils/responsive.dart';
 import '../providers/connectivity_provider.dart';
 import '../providers/program_provider.dart';
 import '../widgets/app_icon.dart';
@@ -145,7 +146,7 @@ class _MainShellState extends State<MainShell> {
                         opacity: 0.9,
                         child: Image.network(
                           t.headerLogoUrl!,
-                          height: 48,
+                          height: rS(context, 48),
                           fit: BoxFit.contain,
                           errorBuilder: (_, _, _) => const SizedBox(),
                         ),
@@ -155,7 +156,7 @@ class _MainShellState extends State<MainShell> {
                       t.eventTitle,
                       style: TextStyle(
                         color: t.headerColorTitle,
-                        fontSize: 18,
+                        fontSize: rFs(context, 18),
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -168,7 +169,7 @@ class _MainShellState extends State<MainShell> {
                             color: t.headerColorSubtitle.withValues(
                               alpha: 0.85,
                             ),
-                            fontSize: 12,
+                            fontSize: rFs(context, 12),
                           ),
                         ),
                       ),
@@ -216,7 +217,7 @@ class _MainShellState extends State<MainShell> {
                                     color: isSelected
                                         ? t.footerActiveBgColor
                                         : t.mainTextPrimaryColor,
-                                    fontSize: 15,
+                                    fontSize: rFs(context, 15),
                                     fontWeight: isSelected
                                         ? FontWeight.w700
                                         : FontWeight.w500,
@@ -290,13 +291,15 @@ class _MainShellState extends State<MainShell> {
                             t.eventTitle,
                             style: TextStyle(
                               color: t.headerColorTitle,
-                              fontSize: 22,
+                              fontSize: rFs(context, 22),
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                           const SizedBox(height: 2),
                           Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 60),
+                            padding: EdgeInsets.symmetric(
+                              horizontal: isTablet(context) ? 80 : 60,
+                            ),
                             child: Text(
                               t.eventSubtitle,
                               textAlign: TextAlign.center,
@@ -304,7 +307,7 @@ class _MainShellState extends State<MainShell> {
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(
                                 color: t.headerColorSubtitle,
-                                fontSize: 13,
+                                fontSize: rFs(context, 13),
                                 fontWeight: FontWeight.w400,
                               ),
                             ),
@@ -324,7 +327,7 @@ class _MainShellState extends State<MainShell> {
                             titles[_selectedIndex],
                             style: TextStyle(
                               color: t.headerColorTitle,
-                              fontSize: 22,
+                              fontSize: rFs(context, 22),
                               fontWeight: FontWeight.w600,
                             ),
                           ),
@@ -393,7 +396,7 @@ class _MainShellState extends State<MainShell> {
                           angle: t.headerRotateDegree * (3.14159 / 180),
                           child: Image.network(
                             t.headerLogoUrl!,
-                            height: 40,
+                            height: rS(context, 40),
                             fit: BoxFit.contain,
                             errorBuilder: (context, error, stack) =>
                                 const SizedBox(),

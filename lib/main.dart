@@ -1,5 +1,7 @@
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'utils/responsive.dart';
 import 'package:provider/provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -23,6 +25,7 @@ import 'services/notification_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   await NotificationService.init();
   runApp(const MainApp());
 }
@@ -273,20 +276,22 @@ class _SplashBootScreenState extends State<SplashBootScreen> {
                   children: [
                     const Icon(Icons.wifi_off, size: 64, color: Colors.white),
                     const SizedBox(height: 24),
-                    const Text(
+                    Text(
                       'Pas de connexion internet',
                       style: TextStyle(
-                        fontSize: 20,
+                        fontSize: rFs(context, 20),
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
                       ),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 12),
-                    const Text(
+                    Text(
                       'Connectez-vous à internet pour\nutiliser l\'application.',
                       textAlign: TextAlign.center,
-                      style: TextStyle(color: Colors.white70, fontSize: 15),
+                      maxLines: 3,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(color: Colors.white70, fontSize: rFs(context, 15)),
                     ),
                     const SizedBox(height: 32),
                     ElevatedButton.icon(

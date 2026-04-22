@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/theme_provider.dart';
+import '../utils/responsive.dart';
 
 class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
   final String title;
@@ -29,7 +30,8 @@ class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
       leading: showBackButton ? BackButton(color: t.headerColorTitle) : null,
       title: Text(
         title,
-        style: TextStyle(color: t.headerColorTitle, fontSize: 18),
+        overflow: TextOverflow.ellipsis,
+        style: TextStyle(color: t.headerColorTitle, fontSize: rFs(context, 18)),
       ),
       iconTheme: IconThemeData(color: t.headerColorTitle),
       actions: [
@@ -43,7 +45,7 @@ class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
                     (3.14159 / 180), // degrees to radians
                 child: Image.network(
                   t.headerLogoUrl!,
-                  height: 36,
+                  height: rS(context, 36),
                   fit: BoxFit.contain,
                   errorBuilder: (context, error, stack) => const SizedBox(),
                 ),

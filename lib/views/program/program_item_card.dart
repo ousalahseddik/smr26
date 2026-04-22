@@ -12,6 +12,7 @@ import '../../../widgets/webview_sheet.dart';
 import '../../../widgets/youtube_inpage_player.dart';
 import '../../../widgets/notification_delay_picker.dart';
 import '../../../utils/color_parser.dart';
+import '../../../utils/responsive.dart';
 import 'session_detail_view.dart';
 import 'session_detail_sheet.dart';
 
@@ -661,7 +662,7 @@ class _ProgramItemCardState extends State<ProgramItemCard>
 
   Widget _buildTimeline(Color resolvedIcon) {
     return SizedBox(
-      width: 50,
+      width: rS(context, 50),
       child: Column(
         children: [
           Text(

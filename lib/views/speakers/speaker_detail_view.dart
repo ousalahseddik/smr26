@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:provider/provider.dart';
 import '../../models/speaker_model.dart';
 import '../../providers/theme_provider.dart';
+import '../../utils/html_utils.dart';
 import '../../widgets/app_bar_widget.dart';
 
 
@@ -101,43 +102,18 @@ class SpeakerDetailView extends StatelessWidget {
               ),
             ),
 
-            if (speaker.biography.isNotEmpty) ...[
-              Padding(
-                padding: const EdgeInsets.fromLTRB(20, 24, 20, 8),
-                child: Text(
-                  'Biographie',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w700,
-                    fontSize: 15,
-                    color: t.mainTextPrimaryColor,
-                  ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 24, 20, 24),
+              child: htmlContentOrEmpty(
+                speaker.biography,
+                textStyle: TextStyle(
+                  fontSize: 14,
+                  color: t.mainTextPrimaryColor,
+                  height: 1.7,
                 ),
+                emptyColor: t.mainTextSecondaryColor,
               ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
-                child: Text(
-                  speaker.biography,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: t.mainTextSecondaryColor,
-                    height: 1.7,
-                  ),
-                ),
-              ),
-            ] else ...[
-              Padding(
-                padding: const EdgeInsets.all(40),
-                child: Center(
-                  child: Text(
-                    'Aucune biographie disponible',
-                    style: TextStyle(
-                      color: t.mainTextSecondaryColor,
-                      fontSize: 14,
-                    ),
-                  ),
-                ),
-              ),
-            ],
+            ),
           ],
         ),
       ),

@@ -91,7 +91,10 @@ class _YoutubeInPagePlayerState extends State<YoutubeInPagePlayer> {
     if (_playing && _controller != null) {
       return ClipRRect(
         borderRadius: BorderRadius.circular(16),
-        child: YoutubePlayer(controller: _controller!),
+        child: AspectRatio(
+          aspectRatio: 16 / 9,
+          child: YoutubePlayer(controller: _controller!),
+        ),
       );
     }
     return ClipRRect(

@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../models/speaker_model.dart';
 import '../../providers/theme_provider.dart';
 import '../../models/app_theme_model.dart';
+import '../../utils/responsive.dart';
 import 'speaker_detail_view.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
@@ -37,27 +38,22 @@ class SpeakerCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(16),
               ),
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
-
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Hero(
                     tag: 'speaker-list-${speaker.id}',
-                    child: _avatar(t, 60),
+                    child: _avatar(t, rS(context, 60)),
                   ),
-
                   const SizedBox(height: 12),
-
                   Text(
                     speaker.fullName,
                     textAlign: TextAlign.center,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+                    style: TextStyle(fontWeight: FontWeight.w600, fontSize: rFs(context, 14)),
                   ),
-
                   const SizedBox(height: 6),
-
                   if (speaker.title.isNotEmpty)
                     Text(
                       speaker.title,
@@ -65,7 +61,7 @@ class SpeakerCard extends StatelessWidget {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
-                        fontSize: 11,
+                        fontSize: rFs(context, 11),
                         color: t.mainTextSecondaryColor,
                       ),
                     ),
@@ -84,13 +80,33 @@ class SpeakerCard extends StatelessWidget {
                 children: [
                   Hero(
                     tag: 'speaker-list-${speaker.id}',
-                    child: _avatar(t, 50),
+                    child: _avatar(t, rS(context, 50)),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [Text(speaker.fullName), Text(speaker.title)],
+                      children: [
+                        Text(
+                          speaker.fullName,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: rFs(context, 14),
+                          ),
+                        ),
+                        if (speaker.title.isNotEmpty)
+                          Text(
+                            speaker.title,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontSize: rFs(context, 12),
+                              color: t.mainTextSecondaryColor,
+                            ),
+                          ),
+                      ],
                     ),
                   ),
                   const Icon(Icons.chevron_right),

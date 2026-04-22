@@ -3,6 +3,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import '../../models/app_theme_model.dart';
+import '../../utils/responsive.dart';
 import 'badge_detail_view.dart';
 
 class HomeBanner extends StatelessWidget {
@@ -13,6 +14,8 @@ class HomeBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (theme.bannerState != 'visible') return const SizedBox.shrink();
+
+    final double maxBannerHeight = isTablet(context) ? 280 : 200;
 
     return Container(
       width: double.infinity,
@@ -30,8 +33,10 @@ class HomeBanner extends StatelessWidget {
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(25),
-        child: Stack(
-          children: [
+        child: ConstrainedBox(
+          constraints: BoxConstraints(maxHeight: maxBannerHeight),
+          child: Stack(
+            children: [
             // IMAGE DE FOND — CachedNetworkImage pour affichage offline
             if (theme.bannerPictureUrl != null)
               CachedNetworkImage(
@@ -78,13 +83,14 @@ class HomeBanner extends StatelessWidget {
                       style: TextStyle(
                         color: theme.bannerBtnTextColor,
                         fontWeight: FontWeight.w900,
-                        fontSize: 13,
+                        fontSize: rFs(context, 13),
                       ),
                     ),
                   ),
                 ),
               ),
-          ],
+            ],
+          ),
         ),
       ),
     );

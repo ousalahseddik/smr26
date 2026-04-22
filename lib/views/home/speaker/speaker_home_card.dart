@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../../../models/speaker_model.dart';
 import '../../../models/app_theme_model.dart';
+import '../../../utils/responsive.dart';
 import '../../speakers/speaker_detail_view.dart';
 
 class SpeakerHomeCard extends StatelessWidget {
@@ -31,8 +32,8 @@ class SpeakerHomeCard extends StatelessWidget {
         );
       },
       child: Container(
-        width: 110,
-        height: 145,
+        width: rS(context, 110),
+        height: rS(context, 145),
         margin: const EdgeInsets.only(right: 10),
         padding: const EdgeInsets.fromLTRB(8, 12, 8, 8),
         decoration: BoxDecoration(
@@ -52,8 +53,8 @@ class SpeakerHomeCard extends StatelessWidget {
               child: ClipRRect(
                 borderRadius: theme.speakerPhotoBorderRadius,
                 child: SizedBox(
-                  width: 52,
-                  height: 52,
+                  width: rS(context, 52),
+                  height: rS(context, 52),
                   child: hasImage
                       ? CachedNetworkImage(
                           imageUrl: speaker.photo!,
@@ -83,7 +84,7 @@ class SpeakerHomeCard extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
                 color: theme.cardTitleColor,
-                fontSize: 12,
+                fontSize: rFs(context, 12),
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -98,7 +99,7 @@ class SpeakerHomeCard extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     color: theme.mainTextSecondaryColor,
-                    fontSize: 10,
+                    fontSize: rFs(context, 10),
                   ),
                 ),
               ),

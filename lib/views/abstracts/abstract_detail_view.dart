@@ -5,6 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../models/abstract_model.dart';
 import '../../models/app_theme_model.dart';
 import '../../providers/theme_provider.dart';
+import '../../utils/html_utils.dart';
 import '../../widgets/app_bar_widget.dart';
 
 class AbstractDetailView extends StatelessWidget {
@@ -118,45 +119,18 @@ class AbstractDetailView extends StatelessWidget {
               ),
             ],
 
-            // ── Biography ──
-            if (abstract.biography != null &&
-                abstract.biography!.isNotEmpty) ...[
-              Padding(
-                padding: const EdgeInsets.fromLTRB(20, 24, 20, 8),
-                child: Text(
-                  'Résumé',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w700,
-                    fontSize: 15,
-                    color: t.mainTextPrimaryColor,
-                  ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 24, 20, 24),
+              child: htmlContentOrEmpty(
+                abstract.biography,
+                textStyle: TextStyle(
+                  fontSize: 14,
+                  color: t.mainTextPrimaryColor,
+                  height: 1.7,
                 ),
+                emptyColor: t.mainTextSecondaryColor,
               ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
-                child: Text(
-                  abstract.biography!,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: t.mainTextSecondaryColor,
-                    height: 1.7,
-                  ),
-                ),
-              ),
-            ] else ...[
-              Padding(
-                padding: const EdgeInsets.all(40),
-                child: Center(
-                  child: Text(
-                    'Aucun résumé disponible',
-                    style: TextStyle(
-                      color: t.mainTextSecondaryColor,
-                      fontSize: 14,
-                    ),
-                  ),
-                ),
-              ),
-            ],
+            ),
           ],
         ),
       ),

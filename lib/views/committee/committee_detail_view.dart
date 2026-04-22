@@ -3,6 +3,7 @@ import 'package:event_app/models/app_theme_model.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_html/flutter_html.dart';
+import '../../utils/html_utils.dart';
 import 'package:provider/provider.dart';
 import '../../models/committee_member_model.dart';
 import '../../providers/theme_provider.dart';
@@ -81,9 +82,7 @@ class CommitteeDetailView extends StatelessWidget {
             ),
 
             // ── Description HTML ──
-            if (member.description != null &&
-                member.description!.isNotEmpty &&
-                member.description != '<p></p>') ...[
+            if (!isHtmlEmpty(member.description)) ...[
               Padding(
                 padding: const EdgeInsets.all(20),
                 child: Html(
@@ -103,16 +102,18 @@ class CommitteeDetailView extends StatelessWidget {
                 ),
               ),
             ] else ...[
-              // Pas de description
               Padding(
-                padding: const EdgeInsets.all(40),
-                child: Text(
-                  'Aucune information disponible',
-                  style: TextStyle(
-                    color: t.mainTextSecondaryColor,
-                    fontSize: 14,
+                padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 20),
+                child: Center(
+                  child: Text(
+                    'Aucune information fournie',
+                    style: TextStyle(
+                      color: t.mainTextSecondaryColor,
+                      fontSize: 14,
+                      fontStyle: FontStyle.italic,
+                    ),
+                    textAlign: TextAlign.center,
                   ),
-                  textAlign: TextAlign.center,
                 ),
               ),
             ],

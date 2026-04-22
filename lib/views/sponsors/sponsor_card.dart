@@ -5,6 +5,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../models/sponsor_model.dart';
 import '../../providers/theme_provider.dart';
+import '../../utils/responsive.dart';
 
 class SponsorCard extends StatelessWidget {
   final SponsorItem sponsor;
@@ -43,14 +44,14 @@ class SponsorCard extends StatelessWidget {
           boxShadow: t.cardShadow,
         ),
         child: displayMode == 'list'
-            ? _buildListLayout(t)
+            ? _buildListLayout(context, t)
             : _buildGridLayout(t),
       ),
     );
   }
 
   // ── LIST : logo gauche + infos contact droite ─────────────────────────────
-  Widget _buildListLayout(AppThemeModel t) {
+  Widget _buildListLayout(BuildContext context, AppThemeModel t) {
     final hasContact = (sponsor.phone != null && sponsor.phone!.isNotEmpty) ||
         (sponsor.email != null && sponsor.email!.isNotEmpty) ||
         (sponsor.link != null && sponsor.link!.isNotEmpty);
@@ -64,8 +65,8 @@ class SponsorCard extends StatelessWidget {
           ClipRRect(
             borderRadius: BorderRadius.circular(8),
             child: SizedBox(
-              width: 100,
-              height: 80,
+              width: rS(context, 100),
+              height: rS(context, 80),
               child: sponsor.image != null && sponsor.image!.isNotEmpty
                   ? CachedNetworkImage(
                       imageUrl: sponsor.image!,
