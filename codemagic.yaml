@@ -1,5 +1,46 @@
 workflows:
 
+  # ── Android — Google Play ──────────────────────────────────────────────────
+  android-release:
+    name: Android Release (AAB + APK)
+    max_build_duration: 60
+    environment:
+      flutter: stable
+      groups:
+        - android_creds
+      vars:
+        CONFIG_FILE: configs/smr26.json
+
+    scripts:
+      - name: Set up keystore
+        script: |
+          echo $FCI_KEYSTORE | base64 --decode > android/upload-keystore.jks
+          cat >> android/key.properties << EOF
+          storePassword=$FCI_KEYSTORE_PASSWORD
+          keyPassword=$FCI_KEY_PASSWORD
+          keyAlias=$FCI_KEY_ALIAS
+          storeFile=../upload-keystore.jks
+          EOF
+
+      - name: Get Flutter packages
+        script: flutter pub get
+
+      - name: Build AAB
+        script: flutter build appbundle --release --dart-define-from-file=$CONFIG_FILE
+
+      - name: Build APK
+        script: flutter build apk --release --dart-define-from-file=$CONFIG_FILE
+
+    artifacts:
+      - build/app/outputs/bundle/release/*.aab
+      - build/app/outputs/flutter-apk/*.apk
+
+    # publishing:
+    #   google_play:
+    #     credentials: $GCLOUD_SERVICE_ACCOUNT_CREDENTIALS
+    #     track: internal
+    #     submit_as_draft: true
+
   # ── iOS — App Store ────────────────────────────────────────────────────────
   ios-release:
     name: iOS Release (IPA)
@@ -42,13 +83,13 @@ workflows:
     artifacts:
       - build/ios/ipa/*.ipa
 
-    # publishing:
-    #   app_store_connect:
-    #     api_key: $APP_STORE_CONNECT_PRIVATE_KEY
-    #     key_id: $APP_STORE_CONNECT_KEY_IDENTIFIER
-    #     issuer_id: $APP_STORE_CONNECT_ISSUER_ID
-    #     submit_to_testflight: true
-    #     submit_to_app_store: true
+    publishing:
+      app_store_connect:
+        api_key: $APP_STORE_CONNECT_PRIVATE_KEY
+        key_id: $APP_STORE_CONNECT_KEY_IDENTIFIER
+        issuer_id: $APP_STORE_CONNECT_ISSUER_ID
+        submit_to_testflight: true
+        submit_to_app_store: true  # Passer à true quand prêt
 
   # ── iOS — Simulator (Appetize) ─────────────────────────────────────────────
   ios-simulator:
