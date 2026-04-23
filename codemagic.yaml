@@ -54,7 +54,7 @@ workflows:
       vars:
         CONFIG_FILE: configs/smr26.json
         BUNDLE_ID: com.htagsante.smr2026
-        APP_STORE_APPLE_ID: 000000000  # Remplacer par votre Apple ID App Store Connect
+        APP_STORE_APPLE_ID: 6763072246
 
     scripts:
       - name: Set up keychain & certificates
