@@ -123,7 +123,20 @@ class SpeakerProvider extends ChangeNotifier {
           errorMessage = "Impossible de charger les données";
         }
       } else {
-        errorMessage = "Impossible de charger les données";
+        final cached = await StorageService.getCachedSpeakers();
+        if (cached != null) {
+          final query = _searchQuery.toLowerCase();
+          _allSpeakers = cached
+              .map((e) => Speaker.fromJson(e))
+              .where((s) =>
+                  s.firstName.toLowerCase().contains(query) ||
+                  s.lastName.toLowerCase().contains(query) ||
+                  s.title.toLowerCase().contains(query))
+              .toList();
+          _hasNext = false;
+        } else {
+          errorMessage = "Impossible de charger les données";
+        }
       }
       debugPrint("❌ Erreur loadInitial : $e");
     } finally {
