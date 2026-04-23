@@ -53,7 +53,7 @@ workflows:
         - ios_creds
       vars:
         CONFIG_FILE: configs/smr26.json
-        BUNDLE_ID: com.htagsante.smr2026
+        BUNDLE_ID: com.hashtagsante.smr2026
         APP_STORE_APPLE_ID: 6763072246
 
     scripts:
