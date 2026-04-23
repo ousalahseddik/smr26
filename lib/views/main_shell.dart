@@ -2,10 +2,12 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:event_app/views/program/program_view.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../providers/theme_provider.dart';
 import '../utils/responsive.dart';
 import '../providers/connectivity_provider.dart';
 import '../providers/program_provider.dart';
+import '../services/update_service.dart';
 import '../widgets/app_icon.dart';
 import 'speakers/speakers_view.dart';
 import 'sponsors/sponsors_view.dart';
@@ -30,9 +32,10 @@ class _MainShellState extends State<MainShell> {
   @override
   void initState() {
     super.initState();
-    // MainShell est toujours créé APRÈS que le thème soit chargé (splash attend loadTheme).
-    // On attend juste le premier frame rendu avant d'afficher le dialog.
-    WidgetsBinding.instance.addPostFrameCallback((_) => _schedulePopup());
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _schedulePopup();
+      _checkUpdate();
+    });
   }
 
   void _schedulePopup() {
@@ -62,6 +65,20 @@ class _MainShellState extends State<MainShell> {
       barrierDismissible: true,
       barrierColor: Colors.black.withValues(alpha: 0.7),
       builder: (_) => _PopupAd(imageUrl: imageUrl),
+    );
+  }
+
+  Future<void> _checkUpdate() async {
+    if (!mounted) return;
+    final dismissed = await UpdateService.wasDismissedToday();
+    if (dismissed) return;
+    final info = await UpdateService.check();
+    if (info == null || !info.hasUpdate) return;
+    if (!mounted) return;
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => _UpdateDialog(info: info),
     );
   }
 
@@ -481,6 +498,52 @@ class _MainShellState extends State<MainShell> {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _UpdateDialog extends StatelessWidget {
+  final UpdateInfo info;
+  const _UpdateDialog({required this.info});
+
+  @override
+  Widget build(BuildContext context) {
+    final t = context.read<ThemeProvider>().theme;
+    return AlertDialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      title: const Row(
+        children: [
+          Icon(Icons.system_update_rounded, color: Color(0xFF6A1B62)),
+          SizedBox(width: 8),
+          Text('Mise à jour disponible'),
+        ],
+      ),
+      content: Text(
+        'Une nouvelle version (${info.storeVersion}) est disponible.\nVous utilisez actuellement la version ${info.currentVersion}.',
+      ),
+      actions: [
+        TextButton(
+          onPressed: () async {
+            await UpdateService.saveDismissed();
+            if (context.mounted) Navigator.pop(context);
+          },
+          child: const Text('Plus tard'),
+        ),
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: t.mainBtnPrimaryColor,
+            foregroundColor: Colors.white,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          ),
+          onPressed: () async {
+            await UpdateService.saveDismissed();
+            if (context.mounted) Navigator.pop(context);
+            final uri = Uri.parse(info.storeUrl);
+            if (await canLaunchUrl(uri)) launchUrl(uri, mode: LaunchMode.externalApplication);
+          },
+          child: const Text('Mettre à jour'),
+        ),
+      ],
     );
   }
 }
