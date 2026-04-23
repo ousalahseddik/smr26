@@ -7,7 +7,7 @@ import '../../providers/program_provider.dart';
 import '../../providers/speaker_provider.dart';
 import '../../providers/theme_provider.dart';
 import '../../models/app_theme_model.dart';
-import '../program/session_detail_sheet.dart';
+import '../program/session_detail_view.dart';
 import '../speakers/speaker_detail_view.dart';
 
 class SearchResultsView extends StatefulWidget {
@@ -214,11 +214,11 @@ class _SearchResultsViewState extends State<SearchResultsView> {
 
   Widget _buildSessionTile(ProgramItem item, AppThemeModel t, BuildContext context) {
     return GestureDetector(
-      onTap: () => showModalBottomSheet(
-        context: context,
-        isScrollControlled: true,
-        backgroundColor: Colors.transparent,
-        builder: (_) => SessionDetailSheet(item: item, theme: t),
+      onTap: () => Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => SessionDetailView(item: item, theme: t),
+        ),
       ),
       child: Container(
         margin: const EdgeInsets.only(bottom: 10),
