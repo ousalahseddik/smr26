@@ -52,28 +52,25 @@ class _SearchResultsViewState extends State<SearchResultsView> {
   List<ProgramItem> _searchSessions(ProgramProvider pp) {
     if (_query.length < 2) return [];
     final q = _query.toLowerCase();
+    final seen = <int>{};
     final List<ProgramItem> results = [];
     for (final day in pp.days) {
-      for (final item in day.items) {
-        if (!item.isSession) continue; // uniquement les sessions
-        final title = item.displayTitle.toLowerCase();
-        final desc = (item.isSession
-                ? item.session?.description
-                : item.description)
-            ?.toLowerCase() ?? '';
-        final location = (item.isSession
-                ? item.session?.room
-                : item.location)
-            ?.toLowerCase() ?? '';
-        // Cherche aussi dans les noms des speakers/modérateurs
-        final participants = item.session?.allParticipants
-            .map((p) => p.fullName.toLowerCase())
-            .join(' ') ?? '';
-        if (title.contains(q) ||
-            desc.contains(q) ||
-            location.contains(q) ||
-            participants.contains(q)) {
-          results.add(item);
+      for (final root in day.items) {
+        for (final item in [root, ...root.children]) {
+          if (!item.isSession) continue;
+          if (!seen.add(item.id)) continue;
+          final title = item.displayTitle.toLowerCase();
+          final desc = (item.session?.description ?? item.description)?.toLowerCase() ?? '';
+          final location = (item.session?.room ?? item.location)?.toLowerCase() ?? '';
+          final participants = item.session?.allParticipants
+              .map((p) => p.fullName.toLowerCase())
+              .join(' ') ?? '';
+          if (title.contains(q) ||
+              desc.contains(q) ||
+              location.contains(q) ||
+              participants.contains(q)) {
+            results.add(item);
+          }
         }
       }
     }
