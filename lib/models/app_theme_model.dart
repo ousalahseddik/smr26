@@ -32,6 +32,7 @@ class AppThemeModel {
   final String bannerState;
   final String bannerChoice;
   final List<String> sliderImageUrls;
+  final int sliderDuration;
 
   // Cards
   final int cardBorderSize;
@@ -100,6 +101,7 @@ class AppThemeModel {
     required this.bannerState,
     this.bannerChoice = 'picture',
     this.sliderImageUrls = const [],
+    this.sliderDuration = 4,
     required this.cardBorderSize,
     required this.cardBorderColor,
     required this.cardBgColor,
@@ -194,6 +196,7 @@ class AppThemeModel {
       bannerBtnState: j['banner_btn_state'] ?? 'visible',
       bannerState: j['banner_state'] ?? 'visible',
       bannerChoice: j['banner_choice'] ?? 'picture',
+      sliderDuration: (j['slider_duration'] as num?)?.toInt() ?? 4,
       sliderImageUrls: (j['slider_images_urls'] as List<dynamic>?)
               ?.map((e) => fixUrl(e.toString()) ?? '')
               .where((url) => url.isNotEmpty)

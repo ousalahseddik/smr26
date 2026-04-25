@@ -23,7 +23,7 @@ class _HomeBannerState extends State<HomeBanner> {
     super.initState();
     if (widget.theme.bannerChoice == 'slider' &&
         widget.theme.sliderImageUrls.length > 1) {
-      _timer = Timer.periodic(const Duration(milliseconds: 3500), (_) {
+      _timer = Timer.periodic(Duration(seconds: widget.theme.sliderDuration), (_) {
         if (!mounted) return;
         final next = (_currentPage + 1) % widget.theme.sliderImageUrls.length;
         _pageController.animateToPage(
