@@ -160,18 +160,17 @@ class _SplashBootScreenState extends State<SplashBootScreen> {
   Future<void> _checkAppVersion() async {
     // Utilise app_version déjà chargé depuis la réponse theme (évite un appel API supplémentaire)
     final serverVersion = context.read<ThemeProvider>().requiredVersion;
+    final info = await PackageInfo.fromPlatform();
+    final currentBuild = int.tryParse(info.buildNumber) ?? 0;
 
     if (serverVersion <= 0) {
       _navigateToHome();
       return;
     }
 
-    final info = await PackageInfo.fromPlatform();
-    final currentBuild = int.tryParse(info.buildNumber) ?? 0;
-
     if (currentBuild < serverVersion && mounted) {
       final forced = AppConfig.forceUpdate;
-      showDialog(
+      await showDialog(
         context: context,
         barrierDismissible: !forced,
         builder: (dialogContext) => PopScope(
