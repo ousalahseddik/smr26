@@ -42,7 +42,7 @@ class AppConfig {
   // When false: the dialog has a "Later" button the user can dismiss.
   static const bool forceUpdate = bool.fromEnvironment(
     'FORCE_UPDATE',
-    defaultValue: true,
+    defaultValue: false,
   );
 
   static const String _primaryHex = String.fromEnvironment(
