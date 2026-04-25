@@ -89,7 +89,7 @@ workflows:
         key_id: $APP_STORE_CONNECT_KEY_IDENTIFIER
         issuer_id: $APP_STORE_CONNECT_ISSUER_ID
         submit_to_testflight: true
-        submit_to_app_store: true  # Passer à true quand prêt
+        submit_to_app_store: false
 
   # ── iOS — Simulator (Appetize) ─────────────────────────────────────────────
   ios-simulator:
@@ -99,6 +99,8 @@ workflows:
       flutter: stable
       xcode: latest
       cocoapods: default
+      groups:
+        - appetize_creds   # variable : APPETIZE_API_TOKEN
       vars:
         CONFIG_FILE: configs/smr26.json
 
@@ -119,20 +121,38 @@ workflows:
             -sdk iphonesimulator \
             -configuration Release \
             ONLY_ACTIVE_ARCH=NO \
-            ARCHS="x86_64" \
-            VALID_ARCHS="x86_64" \
+            ARCHS="x86_64 arm64" \
+            VALID_ARCHS="x86_64 arm64" \
             BUILD_DIR=build/ios_x86 \
             -quiet
           X86_BINARY=$(find build/ios_x86 -name Runner -not -path "*.dSYM/*" | head -1)
           if [ -n "$X86_BINARY" ]; then
             lipo -create "$BINARY" "$X86_BINARY" -output "$BINARY"
-            echo "Fat binary created: $(lipo -info $BINARY)"
+            echo "Fat binary: $(lipo -info $BINARY)"
           fi
 
       - name: Zip Runner.app
         script: |
           cd build/ios/iphonesimulator
           zip -r Runner.app.zip Runner.app
+
+      - name: Upload to Appetize
+        script: |
+          RESPONSE=$(curl -s \
+            -X POST "https://api.appetize.io/v1/apps" \
+            -H "Authorization: Token $APPETIZE_API_TOKEN" \
+            -F "file=@build/ios/iphonesimulator/Runner.app.zip" \
+            -F "platform=ios")
+          echo "Appetize response: $RESPONSE"
+          APP_URL=$(echo $RESPONSE | python3 -c "import sys,json; d=json.load(sys.stdin); print('https://appetize.io/app/' + d.get('publicKey',''))" 2>/dev/null || echo "")
+          if [ -n "$APP_URL" ]; then
+            echo ""
+            echo "✅  App disponible sur Appetize :"
+            echo "    $APP_URL"
+          else
+            echo "⚠️  Upload Appetize echoue ou token manquant — verifie APPETIZE_API_TOKEN"
+            echo "    $RESPONSE"
+          fi
 
     artifacts:
       - build/ios/iphonesimulator/Runner.app.zip

@@ -2,11 +2,16 @@
 setlocal enabledelayedexpansion
 
 :: ============================================================
-::  build_android.bat  <config_name>
-::  Exemple : scripts\build_android.bat smr26
+::  build_android.bat  <config_name> [apk|aab|all]
+::  Exemples :
+::    scripts\build_android.bat smr26
+::    scripts\build_android.bat smr26 aab
+::    scripts\build_android.bat smr26 all
 :: ============================================================
 
 SET CONFIG=%1
+SET TARGET=%2
+IF "%TARGET%"=="" SET TARGET=apk
 
 IF "%CONFIG%"=="" (
     echo [ERREUR] Specifie un nom de config. Ex: scripts\build_android.bat smr26
@@ -24,7 +29,7 @@ IF NOT EXIST "%CONFIG_FILE%" (
 
 echo.
 echo =====================================================
-echo  Build : %CONFIG%
+echo  Build : %CONFIG%  ^|  Cible : %TARGET%
 echo =====================================================
 
 :: ── 1. Icone ───────────────────────────────────────────────
@@ -37,28 +42,39 @@ IF EXIST "%ICON_SRC%" (
     echo [1/3] Pas d'icone specifique, icone par defaut utilisee.
 )
 
-:: ── 2. Build APK ───────────────────────────────────────────
+:: ── 2. Build ────────────────────────────────────────────────
+IF "%TARGET%"=="apk" GOTO BUILD_APK
+IF "%TARGET%"=="aab" GOTO BUILD_AAB
+IF "%TARGET%"=="all" GOTO BUILD_ALL
+echo [ERREUR] Cible inconnue : %TARGET%  ^(valeurs : apk ^| aab ^| all^)
+exit /b 1
+
+:BUILD_APK
 echo [2/3] Build APK en cours ^(peut prendre 3-5 minutes^)...
 cmd /c flutter build apk --release --dart-define-from-file=%CONFIG_FILE%
-
-IF %ERRORLEVEL% NEQ 0 (
-    echo [ERREUR] Build echoue.
-    exit /b 1
-)
-
-:: ── 3. Renommer l'APK ──────────────────────────────────────
+IF %ERRORLEVEL% NEQ 0 ( echo [ERREUR] Build APK echoue. & exit /b 1 )
 echo [3/3] Renommage de l'APK...
-SET OUTPUT_DIR=build\app\outputs\flutter-apk
-SET FINAL_APK=%OUTPUT_DIR%\%CONFIG%-release.apk
+SET APK_SRC=build\app\outputs\flutter-apk\app-release.apk
+SET APK_DST=build\app\outputs\flutter-apk\%CONFIG%-release.apk
+IF EXIST "%APK_SRC%" ( move /Y "%APK_SRC%" "%APK_DST%" >nul & echo  APK genere : %APK_DST% )
+GOTO DONE
 
-IF EXIST "%OUTPUT_DIR%\app-release.apk" (
-    move /Y "%OUTPUT_DIR%\app-release.apk" "%FINAL_APK%" >nul
-    echo.
-    echo  APK genere : %FINAL_APK%
-) ELSE (
-    echo [AVERTISSEMENT] APK introuvable au chemin attendu.
-)
+:BUILD_AAB
+echo [2/3] Build AAB en cours ^(peut prendre 3-5 minutes^)...
+cmd /c flutter build appbundle --release --dart-define-from-file=%CONFIG_FILE%
+IF %ERRORLEVEL% NEQ 0 ( echo [ERREUR] Build AAB echoue. & exit /b 1 )
+echo [3/3] Renommage de l'AAB...
+SET AAB_SRC=build\app\outputs\bundle\release\app-release.aab
+SET AAB_DST=build\app\outputs\bundle\release\%CONFIG%-release.aab
+IF EXIST "%AAB_SRC%" ( move /Y "%AAB_SRC%" "%AAB_DST%" >nul & echo  AAB genere : %AAB_DST% )
+GOTO DONE
 
+:BUILD_ALL
+CALL :BUILD_APK
+CALL :BUILD_AAB
+GOTO DONE
+
+:DONE
 echo.
 echo  Build termine avec succes !
 echo =====================================================
