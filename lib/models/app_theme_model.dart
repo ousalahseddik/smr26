@@ -194,7 +194,7 @@ class AppThemeModel {
       bannerBtnState: j['banner_btn_state'] ?? 'visible',
       bannerState: j['banner_state'] ?? 'visible',
       bannerChoice: j['banner_choice'] ?? 'picture',
-      sliderImageUrls: (j['slider_images'] as List<dynamic>?)
+      sliderImageUrls: (j['slider_images_urls'] as List<dynamic>?)
               ?.map((e) => fixUrl(e.toString()) ?? '')
               .where((url) => url.isNotEmpty)
               .toList() ??
