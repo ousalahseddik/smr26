@@ -160,8 +160,8 @@ class AppThemeModel {
     String? fixUrl(String? url) {
       if (url == null || url.isEmpty) return null;
       if (url.startsWith('http')) return url;
-      // ✅ Plus de hardcode
-      return "${AppConfig.baseUrl.replaceFirst('/api/v1', '')}$url";
+      final base = AppConfig.baseUrl.replaceFirst('/api/v1', '');
+      return url.startsWith('/') ? '$base$url' : '$base/$url';
     }
 
     return AppThemeModel(
