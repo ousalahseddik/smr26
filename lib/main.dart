@@ -158,22 +158,8 @@ class _SplashBootScreenState extends State<SplashBootScreen> {
   }
 
   Future<void> _checkAppVersion() async {
-    int serverVersion = 0;
-
-    // Call the dedicated version endpoint; skip check entirely if offline.
-    try {
-      final response = await ApiClient.dio.get(
-        '/events/${AppConfig.eventSlug}/version',
-      );
-      if (response.data['success'] == true) {
-        serverVersion =
-            (response.data['data']['app_version'] as num?)?.toInt() ?? 0;
-      }
-    } catch (_) {
-      // Offline or unreachable — don't use cached version; let the user in.
-      _navigateToHome();
-      return;
-    }
+    // Utilise app_version déjà chargé depuis la réponse theme (évite un appel API supplémentaire)
+    final serverVersion = context.read<ThemeProvider>().requiredVersion;
 
     if (serverVersion <= 0) {
       _navigateToHome();
