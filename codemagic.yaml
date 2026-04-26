@@ -41,6 +41,48 @@ workflows:
     #     track: internal
     #     submit_as_draft: true
 
+  # ── Android — Firebase App Distribution ───────────────────────────────────
+  android-firebase:
+    name: Android Firebase Distribution (APK)
+    max_build_duration: 60
+    environment:
+      flutter: stable
+      groups:
+        - android_creds
+        - firebase_creds
+      vars:
+        CONFIG_FILE: configs/smr26.json
+        FIREBASE_APP_ID: 1:1017042246130:android:a1d13af7baf17a4475f36b
+
+    scripts:
+      - name: Set up keystore
+        script: |
+          echo $FCI_KEYSTORE | base64 --decode > android/upload-keystore.jks
+          cat >> android/key.properties << EOF
+          storePassword=$FCI_KEYSTORE_PASSWORD
+          keyPassword=$FCI_KEY_PASSWORD
+          keyAlias=$FCI_KEY_ALIAS
+          storeFile=../upload-keystore.jks
+          EOF
+
+      - name: Get Flutter packages
+        script: flutter pub get
+
+      - name: Build APK
+        script: flutter build apk --release --dart-define-from-file=$CONFIG_FILE
+
+      - name: Upload to Firebase App Distribution
+        script: |
+          firebase appdistribution:distribute \
+            build/app/outputs/flutter-apk/app-release.apk \
+            --app $FIREBASE_APP_ID \
+            --token $FIREBASE_TOKEN \
+            --release-notes "Build $(date +'%Y-%m-%d %H:%M')" \
+            --groups "testers"
+
+    artifacts:
+      - build/app/outputs/flutter-apk/*.apk
+
   # ── iOS — App Store ────────────────────────────────────────────────────────
   ios-release:
     name: iOS Release (IPA)
