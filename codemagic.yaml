@@ -77,8 +77,7 @@ workflows:
             build/app/outputs/flutter-apk/app-release.apk \
             --app $FIREBASE_APP_ID \
             --token $FIREBASE_TOKEN \
-            --release-notes "Build $(date +'%Y-%m-%d %H:%M')" \
-            --groups "testers"
+            --release-notes "Build $(date +'%Y-%m-%d %H:%M')"
 
     artifacts:
       - build/app/outputs/flutter-apk/*.apk
