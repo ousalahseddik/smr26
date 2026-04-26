@@ -58,11 +58,20 @@ workflows:
       - name: Set up keystore
         script: |
           echo $FCI_KEYSTORE | base64 --decode > android/upload-keystore.jks
+          keytool -importkeystore \
+            -srckeystore android/upload-keystore.jks \
+            -destkeystore android/upload-keystore.p12 \
+            -deststoretype PKCS12 \
+            -srcalias $FCI_KEY_ALIAS \
+            -deststorepass $FCI_KEYSTORE_PASSWORD \
+            -srcstorepass $FCI_KEYSTORE_PASSWORD \
+            -noprompt 2>/dev/null || true
+          KEYSTORE_FILE=$([ -f android/upload-keystore.p12 ] && echo "../upload-keystore.p12" || echo "../upload-keystore.jks")
           cat >> android/key.properties << EOF
           storePassword=$FCI_KEYSTORE_PASSWORD
           keyPassword=$FCI_KEY_PASSWORD
           keyAlias=$FCI_KEY_ALIAS
-          storeFile=../upload-keystore.jks
+          storeFile=$KEYSTORE_FILE
           EOF
 
       - name: Get Flutter packages
