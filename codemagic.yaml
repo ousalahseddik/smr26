@@ -93,7 +93,7 @@ workflows:
 
   # ── iOS — App Store ────────────────────────────────────────────────────────
   ios-release:
-    name: iOS Release (IPA)
+    name: iOS Release (IPA) v1.0.1+6
     max_build_duration: 60
     environment:
       flutter: stable
@@ -128,10 +128,11 @@ workflows:
         script: |
           flutter build ipa --release \
             --dart-define-from-file=$CONFIG_FILE \
-            --export-options-plist=/Users/builder/export_options.plist
+            --export-options-plist=$CM_EXPORT_OPTIONS_PATH
 
     artifacts:
       - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
 
     publishing:
       app_store_connect:

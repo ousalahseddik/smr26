@@ -309,6 +309,30 @@ class _SplashBootScreenState extends State<SplashBootScreen> {
           const Center(
             child: CircularProgressIndicator(color: Colors.white),
           ),
+          Positioned(
+            bottom: 32,
+            left: 0,
+            right: 0,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text(
+                  'Powered by',
+                  style: TextStyle(
+                    color: Colors.white70,
+                    fontSize: 11,
+                    letterSpacing: 0.5,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Image.asset(
+                  'assets/images/logo-ascrea.png',
+                  height: 20,
+                  fit: BoxFit.contain,
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );

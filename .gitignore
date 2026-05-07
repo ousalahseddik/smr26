@@ -60,3 +60,7 @@ keystore/
 *.jks
 *.keystore
 *.p8
+
+# Build outputs
+releases/
+codemagic.yaml.bak

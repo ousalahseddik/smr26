@@ -429,39 +429,58 @@ class _MainShellState extends State<MainShell> {
       ),
 
       // ── Body + Offline banner ────────────────────────────────────────────
-      body: Column(
+      body: Stack(
         children: [
-          // ── Offline banner ──
-          Consumer<ConnectivityProvider>(
-            builder: (context, conn, _) {
-              if (conn.isOnline) return const SizedBox.shrink();
-              return Container(
-                width: double.infinity,
-                color: Colors.orange.shade700,
-                padding: const EdgeInsets.symmetric(
-                  vertical: 7,
-                  horizontal: 16,
-                ),
-                child: const Row(
-                  children: [
-                    Icon(Icons.wifi_off, color: Colors.white, size: 15),
-                    SizedBox(width: 8),
-                    Text(
-                      'Vous êtes hors ligne',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 13,
-                        fontWeight: FontWeight.w500,
-                      ),
+          Column(
+            children: [
+              // ── Offline banner ──
+              Consumer<ConnectivityProvider>(
+                builder: (context, conn, _) {
+                  if (conn.isOnline) return const SizedBox.shrink();
+                  return Container(
+                    width: double.infinity,
+                    color: Colors.orange.shade700,
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 7,
+                      horizontal: 16,
                     ),
-                  ],
-                ),
-              );
-            },
+                    child: const Row(
+                      children: [
+                        Icon(Icons.wifi_off, color: Colors.white, size: 15),
+                        SizedBox(width: 8),
+                        Text(
+                          'Vous êtes hors ligne',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 13,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+              // ── Pages ──
+              Expanded(
+                child: IndexedStack(index: _selectedIndex, children: pages),
+              ),
+            ],
           ),
-          // ── Pages ──
-          Expanded(
-            child: IndexedStack(index: _selectedIndex, children: pages),
+          // ── Logo ASCREA (coin bas droite) ────────────────────────────────
+          Positioned(
+            bottom: 10,
+            right: 12,
+            child: IgnorePointer(
+              child: Opacity(
+                opacity: 0.45,
+                child: Image.asset(
+                  'assets/images/logo-ascrea.png',
+                  height: 14,
+                  fit: BoxFit.contain,
+                ),
+              ),
+            ),
           ),
         ],
       ),

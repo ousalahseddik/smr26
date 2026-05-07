@@ -45,15 +45,14 @@ class _HomeProgramState extends State<HomeProgram> {
 
   /// Builds a flat list of all session items across all days and all levels
   /// (root items + children of group items).
-  List<({ProgramItem item, DateTime start})> _flattenAllSessions(
+  List<({ProgramItem item, DateTime start, DateTime? end})> _flattenAllSessions(
     List<ProgramDay> days,
     Map<int, String> itemDateMap,
   ) {
-    final result = <({ProgramItem item, DateTime start})>[];
+    final result = <({ProgramItem item, DateTime start, DateTime? end})>[];
 
     for (final day in days) {
       for (final root in day.items) {
-        // Candidates: the root item itself + all its children
         final candidates = [root, ...root.children];
 
         for (final item in candidates) {
@@ -77,7 +76,19 @@ class _HomeProgramState extends State<HomeProgram> {
             int.tryParse(parts[1]) ?? 0,
           );
 
-          result.add((item: item, start: start));
+          DateTime? end;
+          final endParts = item.endTime.split(':');
+          if (endParts.length >= 2) {
+            end = DateTime(
+              dayDate.year,
+              dayDate.month,
+              dayDate.day,
+              int.tryParse(endParts[0]) ?? 0,
+              int.tryParse(endParts[1]) ?? 0,
+            );
+          }
+
+          result.add((item: item, start: start, end: end));
         }
       }
     }
@@ -92,16 +103,27 @@ class _HomeProgramState extends State<HomeProgram> {
     final now = DateTime.now();
     final all = _flattenAllSessions(days, itemDateMap);
 
-    // Sort by full datetime (date + time) — critical for multi-day events
     all.sort((a, b) => a.start.compareTo(b.start));
 
-    final upcoming = all.where((e) => !e.start.isBefore(now)).toList();
+    // Include ongoing sessions (started but not yet ended) + upcoming sessions.
+    // Sessions with no end_time are treated as 1-hour long so they eventually
+    // rotate out instead of staying frozen at the top of the list forever.
+    final upcoming = all
+        .where((e) {
+          final effectiveEnd =
+              e.end ?? e.start.add(const Duration(hours: 1));
+          return !effectiveEnd.isBefore(now);
+        })
+        .toList();
     if (upcoming.isNotEmpty) {
       return upcoming.take(2).map((e) => e.item).toList();
     }
 
-    // Fallback: last 2 past sessions
-    final past = all.where((e) => e.start.isBefore(now)).toList();
+    // Fallback: last 2 past sessions (uses same effectiveEnd for consistency)
+    final past = all.where((e) {
+      final effectiveEnd = e.end ?? e.start.add(const Duration(hours: 1));
+      return effectiveEnd.isBefore(now);
+    }).toList();
     return past.length >= 2
         ? past.sublist(past.length - 2).map((e) => e.item).toList()
         : past.map((e) => e.item).toList();

@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:connectivity_plus/connectivity_plus.dart';
 
 class ConnectivityService {
@@ -13,6 +14,8 @@ class ConnectivityService {
   /// Real check: can we actually reach the internet?
   /// Handles captive portals (hotel WiFi, conference WiFi, etc.)
   static Future<bool> isOnline() async {
+    if (kIsWeb) return true;
+
     final connected = await isConnectedToNetwork();
     if (!connected) return false;
 

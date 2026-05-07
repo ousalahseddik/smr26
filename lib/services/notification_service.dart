@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:timezone/timezone.dart' as tz;
@@ -15,6 +16,7 @@ class NotificationService {
       FlutterLocalNotificationsPlugin();
 
   static Future<void> init() async {
+    if (kIsWeb) return;
     // ── Timezone ──────────────────────────────────────────────────────────
     // IMPORTANT : tz.local reste UTC si on n'appelle pas setLocalLocation.
     // flutter_timezone récupère le fuseau horaire réel de l'appareil.
